@@ -1,0 +1,69 @@
+.home-header {
+  height: 624px;
+  background-image: url("../../images/home-header-bg.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+.home-header__content {
+  width: 608px;
+  margin: 0 auto;
+  padding-top: 160px;
+}
+
+.home-header__heading {
+  font-family: 'Roboto Slab';
+  font-size: 60px;
+  font-weight: 400;
+  line-height: 1.06;
+  color: white;
+  margin: 0;
+}
+
+.home-header__description {
+  font-size: 18px;
+  line-height: 1.3;
+  color: white;
+  margin-top: 94px;
+  margin-bottom: 0;
+}
+
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+  .home-header {
+    height: 400px;
+  }
+
+  .home-header__content {
+    width: 452px;
+    padding-top: 104px;
+  }
+
+  .home-header__heading {
+    font-size: 36px;
+  }
+
+  .home-header__description {
+    margin-top: 56px;
+  }
+
+}
+
+@media screen and (min-width: 320px) and (max-width: 767px) {
+  .home-header {
+    height: 536px;
+  }
+
+  .home-header__content {
+    padding-top: 86px;
+    width: 285px;
+  }
+
+  .home-header__heading {
+    font-size: 36px;
+  }
+
+  .home-header__description {
+    margin: 16px 0 0 0;
+  }
+}

@@ -1,0 +1,21 @@
+.notfound {
+  text-align: center;
+  background-color: #F5F6F7;
+  padding: 80px 0;
+}
+
+.notfound__heading {
+  font-family: 'Roboto Slab';
+  font-size: 26px;
+  line-height: 30px;
+  font-weight: 400;
+}
+
+.notfound__description {
+  width: 320px;
+  margin: 0 auto;
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 400;
+  color: #B6BCBF;
+}

@@ -1,0 +1,64 @@
+.saved-header {
+  margin-bottom: 56px;
+}
+
+.saved-header__content {
+  margin-top: 120px;
+  margin-left: 104px;
+}
+
+.saved-header__page {
+  font-size: 18px;
+  line-height: 1.33;
+  color: rgba(26, 27, 34, 0.5);
+}
+
+.saved-header__title {
+  width: 530px;
+  font-family: 'Roboto Slab';
+  font-weight: 400;
+  font-size: 40px;
+  line-height: 1.15;
+}
+
+.saved-header__keyword {
+  font-size: 18px;
+  line-height: 1.33;
+}
+
+.saved-header__keyword-span {
+  font-weight: 700;
+}
+
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+  .saved-header__content {
+    margin-left: 30px;
+    margin-top: 90px;
+  }
+
+  .saved-header__title {
+    font-size: 30px;
+    width: 336px;
+  }
+}
+
+@media screen and (min-width: 320px) and (max-width: 767px) {
+  .saved-header {
+    margin-bottom: 32px;
+  }
+
+  .saved-header__content {
+    margin-left: 16px;
+    margin-top: 70px;
+  }
+
+  .saved-header__page {
+    font-size: 12px;
+  }
+
+  .saved-header__title {
+    width: auto;
+    margin-top: 16px;
+    font-size: 30px;
+  }
+}

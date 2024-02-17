@@ -1,0 +1,27 @@
+.popup-success-container {
+  margin-top: 207px;
+}
+
+.mobile-popup-success-container {
+  margin-top: 16px;
+}
+
+.popup-success__heading {
+  font-family: 'Roboto';
+  font-weight: 900;
+  font-size: 24px;
+  line-height: 1.17;
+  margin-bottom: 34px;
+}
+
+.popup-success__link {
+  color: #2F71E5;
+  text-decoration: none;
+  font-family: 'Inter';
+  font-size: 18px;
+  font-weight: 1.17;
+}
+
+.popup-success__link:hover {
+  cursor: pointer;
+}

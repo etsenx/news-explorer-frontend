@@ -1,0 +1,91 @@
+.about {
+  height: 624px;
+  
+}
+
+.about-content {
+  display: flex;
+  padding: 80px 0;
+  gap: 86px;
+}
+
+.about-pic {
+  width: 464px;
+  height: 464px;
+  margin-left: 154px;
+}
+
+.about-description {
+  width: 600px;
+  margin-top: 51px;
+}
+
+.about-description__header {
+  font-family: 'Roboto Slab';
+  font-size: 40px;
+  font-weight: 400;
+  line-height: 1.15;
+  margin-top: 0;
+  margin-bottom: 24px;
+}
+
+.about-description__detail {
+  font-size: 18px;
+  line-height: 24px;
+}
+
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+  .about {
+    height: 354px;
+  }
+
+  .about-content {
+    height: auto;
+    padding: 40px 0;
+    gap: 32px;
+  }
+
+  .about-pic {
+    width: 232px;
+    height: 232px;
+    margin-left: 40px;
+  }
+
+  .about-description__header {
+    font-size: 30px;
+  }
+
+  .about-description {
+    margin-top: 0;
+  }
+}
+
+@media screen and (min-width: 320px) and (max-width: 767px) {
+  .about {
+    height: auto;
+  }
+
+  .about-content {
+    flex-direction: column;
+    gap: 0;
+    padding-top: 32px;
+    align-items: center;
+  }
+
+  .about-pic {
+    width: 272px;
+    height: 272px;
+    margin-left: 0;
+  }
+
+  .about-description {
+    width: 288px;
+    margin-left: 0;
+    margin-top: 24px;
+  }
+
+  .about-description__header {
+    font-size: 30px;
+  }
+}
+

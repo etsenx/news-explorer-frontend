@@ -1,0 +1,22 @@
+.popup-input__container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 31px;
+}
+
+.popup-input__label {
+  color: #2F71E5;
+  font-family: 'Inter';
+  font-size: 12px;
+  line-height: 1.21;
+}
+
+.popup-input {
+  font-family: 'Inter';
+  font-size: 14px;
+  line-height: 1.21;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  outline: none;
+  padding: 10px 0;
+}

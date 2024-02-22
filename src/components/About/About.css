@@ -1,6 +1,5 @@
 .about {
-  height: 624px;
-  
+  min-height: 624px;
 }
 
 .about-content {
@@ -13,11 +12,16 @@
   width: 464px;
   height: 464px;
   margin-left: 154px;
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
 }
 
 .about-description {
   width: 600px;
-  margin-top: 51px;
+  margin-top: 31px;
 }
 
 .about-description__header {
@@ -32,6 +36,7 @@
 .about-description__detail {
   font-size: 18px;
   line-height: 24px;
+  text-align: justify;
 }
 
 @media screen and (min-width: 768px) and (max-width: 1023px) {

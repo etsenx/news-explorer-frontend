@@ -8,15 +8,13 @@ function Header(props) {
       <Navigation
         onSigninClick={props.onSigninClick}
         handleLogout={props.handleLogout}
-        isPopupSigninOpen={props.isPopupSigninOpen}
-        isPopupSignupOpen={props.isPopupSignupOpen}
-        isPopupSignupSuccess={props.isPopupSignupSuccess}
-        handleClosePopup={props.handleClosePopup}
+        isAnyPopupOpened={props.isAnyPopupOpened}
+        onPopupClose={props.onPopupClose}
       />
-      <header className='home-header'>
-        <div className='home-header__content'>
-          <h1 className='home-header__heading'>Apa kabar terkini?</h1>
-          <p className='home-header__description'>
+      <header className="home-header">
+        <div className="home-header__content">
+          <h1 className="home-header__heading">Apa kabar terkini?</h1>
+          <p className="home-header__description">
             Temukan berita terkini tentang berbagai topik dan simpan di akun
             pribadimu.
           </p>

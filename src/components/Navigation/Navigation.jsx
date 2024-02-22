@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { CurrentUserContext } from "../../contexts/CurrentUserContext";
 
 import LogoutIcon from "../../images/logout.png";
@@ -23,20 +23,50 @@ function Header(props) {
   const [loggedInButtonStyle, setLoggedInButtonStyle] = useState({
     minWidth: "112px",
   });
-  const [isAnyPopupOpen, setIsAnyPopupOpen] = useState(false);
 
-  const navigate = useNavigate();
   const homeNavLink = {};
 
+  function handleLogout() {
+    props.handleLogout();
+  }
+
+  function handleMenuClick(e) {
+    e.preventDefault();
+    if (isMenuOpen) {
+      setIsMenuOpen(false);
+    } else {
+      setIsMenuOpen(true);
+    }
+  }
+
+  function handleClickOutside(e) {
+    if (navInsideRef.current && !navInsideRef.current.contains(e.target)) {
+      setIsMenuOpen(false);
+    }
+  }
+
+  function mobileCheck() {
+    return (
+      window.matchMedia &&
+      window.matchMedia("(min-width: 320px)").matches &&
+      window.matchMedia("(max-width: 767px)").matches
+    );
+  }
+
+  function tabletCheck() {
+    return (
+      window.matchMedia &&
+      window.matchMedia("(min-width: 768px)").matches &&
+      window.matchMedia("(max-width: 1023px)").matches
+    );
+  }
+
   useEffect(() => {
-    // Mobile Popup doesnt have dark theme
     if (props.isDark && !isMenuOpen) {
       setIsDark("dark");
     } else {
       setIsDark("");
     }
-
-    // Button Style
     function updateButtonStyles() {
       if (mobileCheck()) {
         setNotLoggedInButtonStyle({
@@ -65,7 +95,6 @@ function Header(props) {
       }
     }
 
-    // Handle outside menu click
     if (isMenuOpen && mobileCheck()) {
       document.addEventListener("click", handleClickOutside);
     } else {
@@ -82,73 +111,19 @@ function Header(props) {
       document.body.style.overflow = "unset";
     }
 
-    if (
-      props.isPopupSigninOpen ||
-      props.isPopupSignupOpen ||
-      props.isPopupSignupSuccess
-    ) {
-      setIsAnyPopupOpen(true);
-    } else {
-      setIsAnyPopupOpen(false);
-    }
-
     return () => {
       window.removeEventListener("resize", updateButtonStyles);
       document.removeEventListener("click", handleClickOutside);
     };
-  }, [
-    isMenuOpen,
-    props.isDark,
-    props.isPopupSigninOpen,
-    props.isPopupSignupOpen,
-    props.isPopupSignupSuccess,
-  ]);
-
-  function handleLogout() {
-    props.handleLogout();
-    navigate("/");
-  }
-
-  function handleMenuClick(e) {
-    e.preventDefault();
-    if (isMenuOpen) {
-      setIsMenuOpen(false);
-    } else {
-      setIsMenuOpen(true);
-    }
-  }
-
-  function handleClickOutside(e) {
-    if (navInsideRef.current && !navInsideRef.current.contains(e.target)) {
-      setIsMenuOpen(false);
-    }
-  }
+  }, [isMenuOpen, props.isDark]);
 
   function handleSigninButtonClick() {
     setIsMenuOpen(false);
     props.onSigninClick();
   }
 
-  function mobileCheck() {
-    return (
-      window.matchMedia &&
-      window.matchMedia("(min-width: 320px)").matches &&
-      window.matchMedia("(max-width: 767px)").matches
-    );
-  }
-
-  function tabletCheck() {
-    return (
-      window.matchMedia &&
-      window.matchMedia("(min-width: 768px)").matches &&
-      window.matchMedia("(max-width: 1023px)").matches
-    );
-  }
-
   return (
-    // Check if menu is open and is mobile
     <nav className={`nav ${isMenuOpen && mobileCheck() ? "nav-opened" : ""} `}>
-      {/* Check if mobile */}
       {mobileCheck() ? (
         <div
           className={`${isMenuOpen ? "nav-inside-opened" : ""} ${
@@ -156,11 +131,10 @@ function Header(props) {
           }`}
           ref={navInsideRef}
         >
-          {/* Check if mobile and any popup open, if true nav is close button to close mobile popup */}
-          {mobileCheck() && isAnyPopupOpen ? (
+          {props.isAnyPopupOpened ? (
             <div
               style={{ display: "flex", justifyContent: "flex-end" }}
-              className='nav-mobile'
+              className="nav-mobile"
             >
               <button
                 style={{
@@ -171,14 +145,14 @@ function Header(props) {
               >
                 <img
                   src={CloseIcon}
-                  className='nav-icon'
-                  alt='close'
-                  onClick={props.handleClosePopup}
+                  className="nav-icon"
+                  alt="close"
+                  onClick={props.onPopupClose}
                 />
               </button>
             </div>
           ) : (
-            <div style={{ display: "flex" }} className='nav-mobile'>
+            <div style={{ display: "flex" }} className="nav-mobile">
               <p className={`logo ${isDark}`}>NewsExplorer</p>
               {isMenuOpen ? (
                 <button
@@ -190,8 +164,8 @@ function Header(props) {
                 >
                   <img
                     src={CloseIcon}
-                    className='nav-icon'
-                    alt='close'
+                    className="nav-icon"
+                    alt="close"
                     onClick={handleMenuClick}
                   />
                 </button>
@@ -206,8 +180,8 @@ function Header(props) {
                 >
                   <img
                     src={isDark ? NavIconDark : NavIcon}
-                    className='nav-icon'
-                    alt='menu'
+                    className="nav-icon"
+                    alt="menu"
                   />
                 </button>
               )}
@@ -215,7 +189,7 @@ function Header(props) {
           )}
           <div className={`nav__container ${!isMenuOpen ? "hide-menu" : ""}`}>
             <NavLink
-              to='/'
+              to="/"
               style={homeNavLink}
               className={`nav__link ${isDark} nav__link_selected`}
             >
@@ -223,7 +197,7 @@ function Header(props) {
             </NavLink>
             {currentUser ? (
               <>
-                <NavLink to='/saved-news' className={`nav__link ${isDark}`}>
+                <NavLink to="/saved-news" className={`nav__link ${isDark}`}>
                   <span>Artikel tersimpan</span>
                 </NavLink>
                 <button
@@ -233,7 +207,7 @@ function Header(props) {
                   }`}
                   onClick={handleLogout}
                 >
-                  <span className='nav__login-span' style={loggedInButtonStyle}>
+                  <span className="nav__login-span" style={loggedInButtonStyle}>
                     <span className={`nav__login-span-name ${isDark}`}>
                       {currentUser.username}
                     </span>
@@ -243,7 +217,7 @@ function Header(props) {
                           ? LogoutIconDark
                           : LogoutIcon
                       }
-                      alt='logout-icon'
+                      alt="logout-icon"
                     />
                   </span>
                 </button>
@@ -256,7 +230,7 @@ function Header(props) {
                 onClick={handleSigninButtonClick}
               >
                 <span
-                  className='nav__login-span'
+                  className="nav__login-span"
                   style={notLoggedInButtonStyle}
                 >
                   Masuk
@@ -275,8 +249,8 @@ function Header(props) {
               >
                 <img
                   src={CloseIcon}
-                  className='nav-icon'
-                  alt='close'
+                  className="nav-icon"
+                  alt="close"
                   onClick={handleMenuClick}
                 />
               </button>
@@ -285,13 +259,13 @@ function Header(props) {
                 style={{ border: "none", background: "none", padding: "none" }}
                 onClick={handleMenuClick}
               >
-                <img src={NavIcon} className='nav-icon' alt='menu' />
+                <img src={NavIcon} className="nav-icon" alt="menu" />
               </button>
             )}
           </div>
           <div className={`nav__container ${!isMenuOpen ? "hide-menu" : ""}`}>
             <NavLink
-              to='/'
+              to="/"
               style={homeNavLink}
               className={`nav__link ${isDark} nav__link_selected`}
             >
@@ -299,7 +273,7 @@ function Header(props) {
             </NavLink>
             {currentUser ? (
               <>
-                <NavLink to='/saved-news' className={`nav__link ${isDark}`}>
+                <NavLink to="/saved-news" className={`nav__link ${isDark}`}>
                   <span>Artikel tersimpan</span>
                 </NavLink>
                 <button
@@ -309,13 +283,13 @@ function Header(props) {
                   }`}
                   onClick={handleLogout}
                 >
-                  <span className='nav__login-span' style={loggedInButtonStyle}>
+                  <span className="nav__login-span" style={loggedInButtonStyle}>
                     <span className={`nav__login-span-name ${isDark}`}>
                       {currentUser.username}
                     </span>
                     <img
                       src={props.isDark ? LogoutIconDark : LogoutIcon}
-                      alt='logout-icon'
+                      alt="logout-icon"
                     />
                   </span>
                 </button>
@@ -328,7 +302,7 @@ function Header(props) {
                 onClick={props.onSigninClick}
               >
                 <span
-                  className='nav__login-span'
+                  className="nav__login-span"
                   style={notLoggedInButtonStyle}
                 >
                   Masuk

@@ -5,7 +5,7 @@ import PopupWithForm from "../PopupWithForm/PopupWithForm";
 import "./PopupSignup.css";
 import MobilePopupWithForm from "../MobilePopupWithForm/MobilePopupWithForm";
 
-function PopupSignup(props) {
+function PopupSignin(props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
@@ -32,28 +32,19 @@ function PopupSignup(props) {
     }
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    const result = props.handleRegister(email, password, username);
+    const result = await props.handleRegister(email, password, username);
     if (result.success) {
       setEmail("");
       setPassword("");
       setUsername("");
-      hideError();
+      setShowError(false);
       props.onClose();
       props.openSuccessPopup();
     } else {
       setShowError(true);
     }
-  }
-
-  function handleClosePopup() {
-    hideError();
-    props.onClose();
-  }
-
-  function hideError() {
-    setShowError(false);
   }
 
   return props.isMobile ? (
@@ -62,7 +53,7 @@ function PopupSignup(props) {
       heading="Daftar"
       link="Masuk"
       isOpen={props.isOpen}
-      onClose={handleClosePopup}
+      onClose={props.onClose}
       handlePopupOpen={props.onSigninOpen}
       isInputEmpty={isInputEmpty}
       saveButton={saveButton}
@@ -125,7 +116,7 @@ function PopupSignup(props) {
       heading="Daftar"
       link="Masuk"
       isOpen={props.isOpen}
-      onClose={handleClosePopup}
+      onClose={props.onClose}
       handlePopupOpen={props.onSigninOpen}
       isInputEmpty={isInputEmpty}
       saveButton={saveButton}
@@ -185,4 +176,4 @@ function PopupSignup(props) {
   );
 }
 
-export default PopupSignup;
+export default PopupSignin;

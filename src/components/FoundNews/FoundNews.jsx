@@ -18,7 +18,6 @@ function FoundNews(props) {
           showCardCounter={showCardCounter}
           handleSaveNews={props.handleSaveNews}
           onCardDelete={props.onCardDelete}
-          savedNews={props.savedNews}
         />
         <div className="found-news__button-container">
           <button className="found-news__button" onClick={onClick}>

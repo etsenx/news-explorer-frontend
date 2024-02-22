@@ -1,57 +1,29 @@
-import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { CurrentUserContext } from "../../contexts/CurrentUserContext";
 
 import Main from "../Main/Main";
 import SavedNews from "../SavedNews/SavedNews";
 import Footer from "../Footer/Footer";
-import ProtectedRoute from "../ProtectedRoute/ProtectedRoute";
 import PopupSignin from "../PopupSignin/PopupSignin";
 import PopupSignup from "../PopupSignup/PopupSignup";
 import PopupSignupSuccess from "../PopupSignupSuccess/PopupSignupSuccess";
 
 import { newsApi } from "../../utils/NewsApi";
-import { mainApi } from "../../utils/MainApi";
 
 import "./App.css";
 
 function App() {
-  const navigate = useNavigate();
-  const [currentUser, setCurrentUser] = useState();
+  const [registeredUser, setRegisteredUser] = useState([]);
+  const [currentUser, setCurrentUser] = useState(registeredUser[0]);
   const [searchedKeyword, setsearchedKeyword] = useState();
   const [isSearching, setIsSearching] = useState(false);
   const [foundNews, setFoundNews] = useState(false);
   const [foundNewsData, setFoundNewsData] = useState([]);
-  const [savedNews, setSavedNews] = useState([]);
   const [isPopupSigninOpen, setIsPopupSigninOpen] = useState(false);
   const [isPopupSignupOpen, setIsPopupSignupOpen] = useState(false);
   const [isPopupSignupSuccess, setIsPopupSignupSuccess] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    function checkToken() {
-      if (localStorage.getItem("token")) {
-        const token = localStorage.getItem("token");
-        mainApi
-          .getUserData(token)
-          .then((user) => {
-            if (user) {
-              setCurrentUser(user);
-              const token = localStorage.getItem("token");
-              mainApi.getAllSavedArticle(token).then((articles) => {
-                setSavedNews(articles);
-              });
-            }
-          })
-          .catch(() => {
-            localStorage.removeItem("token");
-            navigate('/');
-          });
-      }
-    }
-
-    checkToken();
-  }, [navigate]);
 
   useEffect(() => {
     if (isPopupSigninOpen || isPopupSignupOpen || isPopupSignupSuccess) {
@@ -103,41 +75,48 @@ function App() {
     setIsPopupSignupSuccess(false);
   }
 
-  async function handleLogin(email, password) {
-    return await mainApi
-      .signIn(email, password)
-      .then((result) => {
-        if (result.token) {
-          return mainApi.getUserData(result.token).then((user) => {
-            handleClosePopup();
-            setCurrentUser(user);
-            mainApi.getAllSavedArticle(result.token).then((articles) => {
-              setSavedNews(articles);
-            });
-            return { success: true };
-          });
-        }
-      })
-      .catch((err) => {
-        return err;
-      });
+  function handleLogin(email, password) {
+    const foundUser = registeredUser.find((user) => user.email === email);
+    if (foundUser) {
+      if (foundUser.password === password) {
+        handleClosePopup();
+        setCurrentUser(foundUser);
+        return { success: true };
+      }
+      return { success: false, error: "Incorrect password" };
+    } else {
+      return { success: false, error: "Email not found" };
+    }
   }
 
-  async function handleRegister(email, password, username) {
-    return await mainApi
-      .signUp(email, password, username)
-      .then((result) => {
-        return result;
-      })
-      .catch((err) => {
-        return err;
-      });
+  function handleRegister(email, password, username) {
+    const userExist = registeredUser.find((user) => user.email === email);
+    if (userExist) {
+      return { success: false, error: "Email tidak tersedia" };
+    }
+
+    let latestId = 0;
+    if (registeredUser.length === 0) {
+      latestId = 0;
+    } else {
+      latestId = registeredUser[registeredUser.length - 1].id + 1;
+    }
+
+    setRegisteredUser((prevData) => [
+      ...prevData,
+      {
+        id: latestId,
+        email: email,
+        password: password,
+        username: username,
+        savedNews: [],
+      },
+    ]);
+    return { success: true };
   }
 
   function handleLogout() {
     setCurrentUser();
-    localStorage.removeItem("token");
-    navigate('/');
   }
 
   function handleSearchNews(query) {
@@ -149,27 +128,33 @@ function App() {
     });
   }
 
-  async function handleSaveNews(article) {
-    article.keyword = searchedKeyword;
-    if (!article.image) {
-      article.image =
-        "https://t4.ftcdn.net/jpg/04/70/29/97/360_F_470299797_UD0eoVMMSUbHCcNJCdv2t8B2g1GVqYgs.jpg";
-    }
-    return await mainApi
-      .saveArticle(localStorage.getItem("token"), article)
-      .then((res) => {
-        setSavedNews([...savedNews, res]);
-        return res;
-      });
+  function handleSaveNews(news) {
+    const userIndex = registeredUser.findIndex(
+      (user) => user.id === currentUser.id
+    );
+    news.keyword = searchedKeyword;
+    registeredUser[userIndex].savedNews.push(news);
+    const newSaveCard = registeredUser[userIndex].savedNews;
+    setCurrentUser((prevData) => ({
+      ...prevData,
+      savedNews: newSaveCard,
+    }));
   }
 
-  async function handleDeleteCard(articleId) {
-    return await mainApi
-      .deleteSavedArticle(localStorage.getItem("token"), articleId)
-      .then((res) => {
-        setSavedNews(savedNews.filter((article) => article._id !== articleId));
-      });
+  function handleDeleteCard(title, author) {
+    const userIndex = registeredUser.findIndex(
+      (user) => user.id === currentUser.id
+    );
+    const updatedNews = registeredUser[userIndex].savedNews.filter((news) => {
+      return !(news.title === title && news.author === author);
+    });
+    registeredUser[userIndex].savedNews = updatedNews;
+    setCurrentUser((prevData) => ({
+      ...prevData,
+      savedNews: updatedNews,
+    }));
   }
+
 
   return (
     <div className="App">
@@ -189,50 +174,45 @@ function App() {
                 foundNews={foundNews}
                 foundNewsData={foundNewsData}
                 onCardDelete={handleDeleteCard}
-                savedNews={savedNews}
-                isAnyPopupOpened={
-                  isPopupSigninOpen || isPopupSignupOpen || isPopupSignupSuccess
-                }
-                onPopupClose={handleClosePopup}
+                isPopupSigninOpen={isPopupSigninOpen}
+                isPopupSignupOpen={isPopupSignupOpen}
+                isPopupSignupSuccess={isPopupSignupSuccess}
+                handleClosePopup={handleClosePopup}
               />
             }
           />
-          <Route element={<ProtectedRoute />}>
-            <Route
-              path="/saved-news"
-              element={
-                <SavedNews
-                  handleLogout={handleLogout}
-                  onCardDelete={handleDeleteCard}
-                  savedNews={savedNews}
-                />
-              }
-            />
-          </Route>
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route
+            path="/saved-news"
+            element={
+              <SavedNews
+                handleLogout={handleLogout}
+                onCardDelete={handleDeleteCard}
+              />
+            }
+          />
         </Routes>
         <Footer />
-        <PopupSignin
-          isOpen={isPopupSigninOpen}
-          onClose={handleClosePopup}
-          onSignupOpen={handleSignupClick}
-          handleLogin={handleLogin}
-          isMobile={isMobile}
-        />
-        <PopupSignup
-          isOpen={isPopupSignupOpen}
-          onClose={handleClosePopup}
-          onSigninOpen={handleSigninClick}
-          openSuccessPopup={handleSuccessClick}
-          handleRegister={handleRegister}
-          isMobile={isMobile}
-        />
-        <PopupSignupSuccess
-          isOpen={isPopupSignupSuccess}
-          onClose={handleClosePopup}
-          onSigninOpen={handleSigninClick}
-          isMobile={isMobile}
-        />
+          <PopupSignin
+            isOpen={isPopupSigninOpen}
+            onClose={handleClosePopup}
+            onSignupOpen={handleSignupClick}
+            handleLogin={handleLogin}
+            isMobile={isMobile}
+          />
+          <PopupSignup
+            isOpen={isPopupSignupOpen}
+            onClose={handleClosePopup}
+            onSigninOpen={handleSigninClick}
+            openSuccessPopup={handleSuccessClick}
+            handleRegister={handleRegister}
+            isMobile={isMobile}
+          />
+          <PopupSignupSuccess
+            isOpen={isPopupSignupSuccess}
+            onClose={handleClosePopup}
+            onSigninOpen={handleSigninClick}
+            isMobile={isMobile}
+          />
       </CurrentUserContext.Provider>
     </div>
   );

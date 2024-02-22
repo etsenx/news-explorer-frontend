@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { CurrentUserContext } from "../../contexts/CurrentUserContext";
 
 import saveIcon from "../../images/bookmark.svg";
@@ -11,10 +11,36 @@ import "./NewsCard.css";
 
 function NewsCard(props) {
   const currentUser = useContext(CurrentUserContext);
-  const [isSaved, setIsSaved] = useState(props.isSaved);
+  const [isSaved, setIsSaved] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const { source, title, description, publishedAt, url, urlToImage, keyword } =
-    props.data;
+  const {
+    source,
+    title,
+    description,
+    publishedAt,
+    urlToImage,
+    keyword,
+    author,
+  } = props.data;
+
+  useEffect(() => {
+    if (currentUser) {
+      const isSame = currentUser.savedNews.some((news) => {
+        return (
+          news.source.name === source.name &&
+          news.title === title &&
+          news.author === author &&
+          news.publishedAt === publishedAt
+        );
+      });
+      if (isSame) {
+        setIsSaved(true);
+      }
+    } else {
+      setIsSaved(false);
+    }
+  }, [currentUser, author, source, title, publishedAt]);
+
   function onSaveButtonOver() {
     setIsHovered(true);
   }
@@ -26,19 +52,8 @@ function NewsCard(props) {
   function handleSaveButtonClick() {
     if (currentUser) {
       if (!isSaved) {
-        const article = {
-          title: title,
-          text: description,
-          date: publishedAt,
-          source: source,
-          link: url,
-          image: urlToImage,
-        };
-        props.handleSaveNews(article).then((res) => {
-          if (res) {
-            setIsSaved(true);
-          }
-        });
+        setIsSaved(true);
+        props.handleSaveNews(props.data);
       } else {
         setIsSaved(false);
         handleDelete();
@@ -47,7 +62,7 @@ function NewsCard(props) {
   }
 
   function handleDelete() {
-    props.onCardDelete(props.id);
+    props.onCardDelete(title, author);
   }
 
   function formatDate(inputDate) {
@@ -65,7 +80,7 @@ function NewsCard(props) {
         <p className="news-card__published-date">{publishedDate}</p>
         <h2 className="news-card__heading">{title}</h2>
         <p className="news-card__brief-description">{description}</p>
-        <p className="news-card__source">{source}</p>
+        <p className="news-card__source">{source.name}</p>
       </div>
       {props.savedNewsPage ? (
         <>
@@ -115,11 +130,7 @@ function NewsCard(props) {
           >
             <img
               src={
-                currentUser && isSaved
-                  ? saveIconActive
-                  : isHovered
-                  ? saveIconHover
-                  : saveIcon
+                isSaved ? saveIconActive : isHovered ? saveIconHover : saveIcon
               }
               className="news-card__save-button-icon"
               alt="Save Button"

@@ -1,9 +1,8 @@
+import "./Main.css";
 import Header from "../Header/Header";
 import About from "../About/About";
 import FoundNews from "../FoundNews/FoundNews";
 import Preloader from "../Preloader/Preloader";
-
-import "./Main.css";
 
 function Main(props) {
   return (
@@ -14,15 +13,16 @@ function Main(props) {
         setFoundNews={props.setFoundNews}
         onSigninClick={props.onSigninClick}
         handleLogout={props.handleLogout}
-        isAnyPopupOpened={props.isAnyPopupOpened}
-        onPopupClose={props.onPopupClose}
+        isPopupSigninOpen={props.isPopupSigninOpen}
+        isPopupSignupOpen={props.isPopupSignupOpen}
+        isPopupSignupSuccess={props.isPopupSignupSuccess}
+        handleClosePopup={props.handleClosePopup}
       />
       {props.foundNews ? (
         <FoundNews
           foundNewsData={props.foundNewsData}
           handleSaveNews={props.handleSaveNews}
           onCardDelete={props.onCardDelete}
-          savedNews={props.savedNews}
         />
       ) : (
         ""

@@ -6,12 +6,12 @@
   display: flex;
   padding: 80px 0;
   gap: 86px;
+  justify-content: center;
 }
 
 .about-pic {
   width: 464px;
   height: 464px;
-  margin-left: 154px;
   border-radius: 50%;
   -webkit-border-radius: 50%;
   -moz-border-radius: 50%;
